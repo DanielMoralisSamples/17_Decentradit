@@ -48,7 +48,7 @@ const styles = {
 
 function Wallet() {
   return (
-    <Flex maxWidth="1200px">
+    <Flex maxWidth="2400px">
       <h1 style={styles.title}>💵Your Wallet</h1>
       <div style={styles.card}>
         <div style={styles.header}>
