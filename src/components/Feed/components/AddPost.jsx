@@ -5,15 +5,13 @@ import { useState } from "react"
 
 
 const AddPost = ({categoryId}) => {
-    const { walletAddress, contractABI, contractAddress} = useMoralisDapp();
+    const {contractABI, contractAddress} = useMoralisDapp();
     const contractABIJson = JSON.parse(contractABI);    
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [options, setOptions] = useState("");
     const ipfsProcessor = useMoralisFile();
     const contractProcessor = useWeb3ExecuteFunction();
     
-    //const { fetch } = useWeb3ExecuteFunction(options);
 
     const validateForm = () => {
         let result = !title || !content ? false: true;
@@ -26,7 +24,7 @@ const AddPost = ({categoryId}) => {
     }
 
     async function addPost(post) {
-        const contentUri = processContent(post); 
+        const contentUri = await processContent(post); 
         const options = {
             contractAddress: contractAddress,
             functionName: "createPost",
@@ -37,8 +35,7 @@ const AddPost = ({categoryId}) => {
                 _categoryId: categoryId
             },
             }
-        await contractProcessor.fetch(options)
-        contractProcessor.fetch({
+        await contractProcessor.fetch({params:options,
             onSuccess: () => console.log("success"),
             onError: (error) => console.error(error),
         });
@@ -62,9 +59,7 @@ const AddPost = ({categoryId}) => {
         addPost({title, content})
         clearForm()
     }
-
-
-
+    
     return (
     <form onSubmit={onSubmit}>
         <div className ="row">

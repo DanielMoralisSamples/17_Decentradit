@@ -1,22 +1,19 @@
 import { useState } from 'react'
-import { useMoralisFile } from 'react-moralis'
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useMoralis } from 'react-moralis';
-import { useWeb3Contract } from 'hooks/useWeb3Contract';
+import { useMoralisDapp } from 'providers/MoralisDappProvider/MoralisDappProvider'
 import Posts from './components/Posts'
 import Reputation from 'components/Reputation'
-//import ReputationB from 'components/ReputationB';
 import AddPost from './components/AddPost'
 
-const Feed = ({selectedCategory, reputation}) => {
+const Feed = () => {
     const [showAddPost, setShowAddPost] = useState(false)
+    const {selectedCategory} = useMoralisDapp()
     
     function toogleShowAddPost() {
         setShowAddPost(!showAddPost);
     }
     
     let result = null
-    if(selectedCategory==null){
+    if(selectedCategory["category"]==="default"){
         result = (
             <div className="col-lg-9">
                 <h3>Choose a Category</h3>
