@@ -24,38 +24,40 @@ const Post = ({ post }) => {
     if (!votes?.length) return null;
 
     async function getPostVotes() {
-      const fetchedVote = JSON.parse(JSON.stringify(votes));
-      if (fetchedVote[0].voter === walletAddress) setVoteStatus(fetchedVote[0].up ? "liked" : "disliked");
-      console.log("fetchedVotefetchedVote", fetchedVote);
-      const postVotes = fetchedVote[0]["postVotes"];
+      const fetchedVotes = JSON.parse(JSON.stringify(votes));
+      console.log("fetchedVotefetchedVote", fetchedVotes);
+      fetchedVotes.forEach(({ voter, up }) => {
+        if (voter === walletAddress) setVoteStatus(up ? "liked" : "disliked");
+      });
+      const postVotes = fetchedVotes[0]["postVotes"];
       setPostVotes(postVotes);
       return postVotes;
     }
 
     getPostVotes();
-  }, [votes]);
+  }, [votes, walletAddress]);
 
   /**
    * Vote Function
    * @param {*} direction : voteDown or voteUp;
    */
   async function vote(direction) {
-    if (walletAddress.toLowerCase() !== postOwner.toLowerCase()) {
-      const options = {
-        contractAddress: contractAddress,
-        functionName: direction,
-        abi: contractABIJson,
-        params: {
-          _postId: post["postId"],
-          [direction === "voteDown" ? "_reputationTaken" : "_reputationAdded"]: 1,
-        },
-      };
-      await contractProcessor.fetch({
-        params: options,
-        onSuccess: () => console.log("success"),
-        onError: (error) => console.error(error),
-      });
-    } else message.error("You cannot vote on your posts");
+    if (walletAddress.toLowerCase() === postOwner.toLowerCase()) return message.error("You cannot vote on your posts");
+    if (voteStatus) return message.error("Already voted");
+    const options = {
+      contractAddress: contractAddress,
+      functionName: direction,
+      abi: contractABIJson,
+      params: {
+        _postId: post["postId"],
+        [direction === "voteDown" ? "_reputationTaken" : "_reputationAdded"]: 1,
+      },
+    };
+    await contractProcessor.fetch({
+      params: options,
+      onSuccess: () => console.log("success"),
+      onError: (error) => console.error(error),
+    });
   }
 
   const actions = [
