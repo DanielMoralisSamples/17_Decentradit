@@ -3,7 +3,7 @@ import { useMoralis } from "react-moralis";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import Account from "components/Account";
 import Blockie from "components/Blockie";
-import {Layout } from "antd";
+import { Layout } from "antd";
 import "antd/dist/antd.css";
 import Main from "components/Main";
 import "./style.css";
@@ -45,8 +45,8 @@ const App = () => {
   }, [isAuthenticated, isWeb3Enabled]);
 
   return (
-    <Router>
-      <Layout style={{ height: "100vh", background: "#f0f2f500" }}>
+    <Layout style={{ height: "100vh", overflow: "auto" }}>
+      <Router>
         <Header style={styles.header}>
           <Logo />
           <div style={styles.headerRight}>
@@ -65,13 +65,11 @@ const App = () => {
           </Switch>
           {isAuthenticated ? <Redirect to="/main" /> : <Redirect to="/nonauthenticated" />}
         </div>
-      </Layout>
-    </Router>
+      </Router>
+    </Layout>
   );
 };
 
-export const Logo = () => (
-  <h3>Decentradit</h3>
-);
+export const Logo = () => <h3>Decentradit</h3>;
 
 export default App;
