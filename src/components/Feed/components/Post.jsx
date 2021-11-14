@@ -1,7 +1,6 @@
 import { useMoralisQuery, useWeb3ExecuteFunction } from "react-moralis";
 import { useState, useEffect, createElement } from "react";
 import Blockie from "components/Blockie";
-import VotesArea from "./VotesArea";
 import { Comment, Tooltip, Avatar, message, Divider } from "antd";
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
@@ -12,39 +11,43 @@ const Post = ({ post }) => {
   const { contentId, postId, postOwner } = post;
   const [postVotes, setPostVotes] = useState("0");
   const [voteStatus, setVoteStatus] = useState();
-  //const [dataFetched, setDataFetched] = useState(false);
-  console.log("postpostpost", post);
-  /**From vote */
 
   const { walletAddress, contractABI, contractAddress } = useMoralisDapp();
   const contractABIJson = JSON.parse(contractABI);
   const contractProcessor = useWeb3ExecuteFunction();
 
-  const { data: votes } = useMoralisQuery("Votes", (query) => query.equalTo("postId", postId).limit(1), [], {
+  const { data: votes } = useMoralisQuery("Votes", (query) => query.equalTo("postId", postId), [], {
     live: true,
   });
 
   useEffect(() => {
-    function getPostVotes() {
-      const fetchedVote = JSON.parse(JSON.stringify(votes, ["postVotes"]));
+    if (!votes?.length) return null;
+
+    async function getPostVotes() {
+      const fetchedVote = JSON.parse(JSON.stringify(votes));
+      if (fetchedVote[0].voter === walletAddress) setVoteStatus(fetchedVote[0].up ? "liked" : "disliked");
+      console.log("fetchedVotefetchedVote", fetchedVote);
       const postVotes = fetchedVote[0]["postVotes"];
+      setPostVotes(postVotes);
       return postVotes;
     }
-    if (votes.length > 0) {
-      setPostVotes(getPostVotes());
-    }
+
+    getPostVotes();
   }, [votes]);
 
-  /** voteUp function */
-  async function voteUp() {
+  /**
+   * Vote Function
+   * @param {*} direction : voteDown or voteUp;
+   */
+  async function vote(direction) {
     if (walletAddress.toLowerCase() !== postOwner.toLowerCase()) {
       const options = {
         contractAddress: contractAddress,
-        functionName: "voteUp",
+        functionName: direction,
         abi: contractABIJson,
         params: {
           _postId: post["postId"],
-          _reputationAdded: 1,
+          [direction === "voteDown" ? "_reputationTaken" : "_reputationAdded"]: 1,
         },
       };
       await contractProcessor.fetch({
@@ -54,40 +57,22 @@ const Post = ({ post }) => {
       });
     } else message.error("You cannot vote on your posts");
   }
-
-  /** voteDown function */
-  async function voteDown() {
-    if (walletAddress.toLowerCase() !== postOwner.toLowerCase()) {
-      const options = {
-        contractAddress: contractAddress,
-        functionName: "voteDown",
-        abi: contractABIJson,
-        params: {
-          _postId: post["postId"],
-          _reputationTaken: 1,
-        },
-      };
-      await contractProcessor.fetch({
-        params: options,
-        onSuccess: () => console.log("success"),
-        onError: (error) => console.error(error),
-      });
-    } else message.error("You cannot vote on your posts");
-  }
-
-  /**From vote */
-
-  //
 
   const actions = [
     <Tooltip key="comment-basic-like" title="Vote Up">
-      <span style={{ fontSize: "15px", display: "flex", alignItems: "center" }} onClick={() => voteUp()}>
+      <span
+        style={{ fontSize: "15px", display: "flex", alignItems: "center", marginRight: "16px" }}
+        onClick={() => vote("voteUp")}
+      >
         {createElement(voteStatus === "liked" ? LikeFilled : LikeOutlined)} Vote Up
       </span>
     </Tooltip>,
     <span style={{ fontSize: "15px" }}>{postVotes}</span>,
     <Tooltip key="comment-basic-dislike" title="Dislike">
-      <span style={{ fontSize: "15px", display: "flex", alignItems: "center" }} onClick={() => voteDown()}>
+      <span
+        style={{ fontSize: "15px", display: "flex", alignItems: "center", marginLeft: "8px" }}
+        onClick={() => vote("voteDown")}
+      >
         {createElement(voteStatus === "disliked" ? DislikeFilled : DislikeOutlined)} Vote Down
       </span>
     </Tooltip>,
@@ -120,23 +105,6 @@ const Post = ({ post }) => {
   const loading = "";
 
   const result = (
-    // <Card>
-    //   <div className="row">
-    //     <VotesArea postId={post["postId"]} postOwner={post["postOwner"]} />
-    //     <div className="col-lg-10">
-    //       <div className="row">
-    //         <div className="col-lg-10">
-    //           <h4 className="mb-1">{postContent["title"]}</h4>
-    //         </div>
-    //         <div className="col-lg-2">
-    //           <Blockie address={post["postOwner"]} size="7" scale="5" />
-    //         </div>
-    //       </div>
-    //       <p className="mt-1 mb-1">{postContent["content"]}</p>
-    //     </div>
-    //   </div>
-    // </Card>
-    // <div style={glStyles.card}>
     <Comment
       style={{ ...glStyles.card, padding: "0px 15px", marginBottom: "10px" }}
       actions={actions}
@@ -152,7 +120,6 @@ const Post = ({ post }) => {
         </>
       }
     />
-    // </div>
   );
 
   return postContent["title"] === "default" ? loading : result;

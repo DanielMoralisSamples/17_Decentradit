@@ -12,7 +12,7 @@ const Posts = () => {
     { live: true }
   );
 
-  const fetchedPosts = JSON.parse(JSON.stringify(queryPost.data, ["postId", "contentId", "postOwner"]));
+  const fetchedPosts = JSON.parse(JSON.stringify(queryPost.data, ["postId", "contentId", "postOwner"])).reverse();
 
   const havePosts = fetchedPosts.length > 0 ? true : false;
 

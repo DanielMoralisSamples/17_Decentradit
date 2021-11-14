@@ -2808,6 +2808,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tabler/icons@npm:^1.42.0":
+  version: 1.42.0
+  resolution: "@tabler/icons@npm:1.42.0"
+  peerDependencies:
+    react: ^16.x || 17.x
+    react-dom: ^16.x || 17.x
+  checksum: 7cac9462fd914933f8d0ce7a7b95245208aef934816419201abdce098d46baaed7b29ba1f336664bc66a31594124d1cfa25876fed5691f8627689edbf445c3ab
+  languageName: node
+  linkType: hard
+
 "@testing-library/dom@npm:^7.28.1":
   version: 7.31.2
   resolution: "@testing-library/dom@npm:7.31.2"
@@ -8119,6 +8129,7 @@ __metadata:
   resolution: "ethereum-boilerplate@workspace:."
   dependencies:
     "@ant-design/icons": ^4.7.0
+    "@tabler/icons": ^1.42.0
     "@testing-library/jest-dom": ^5.11.4
     "@testing-library/react": ^11.1.0
     "@testing-library/user-event": ^12.1.10
