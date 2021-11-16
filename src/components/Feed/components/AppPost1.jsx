@@ -1,18 +1,12 @@
-import { useWeb3ExecuteFunction } from "react-moralis";
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useMoralisFile } from "react-moralis";
-import { useState } from "react"
-import {message } from "antd";
-
-
-const AddPost = ({categoryId}) => {
+import {Form, Input, Button} from "antd"
+const AppPost1 = () => {
     const {contractABI, contractAddress} = useMoralisDapp();
     const contractABIJson = JSON.parse(contractABI);    
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const ipfsProcessor = useMoralisFile();
     const contractProcessor = useWeb3ExecuteFunction();
-    
+    const {  Form, Input, Button } = antd;
 
     const validateForm = () => {
         let result = !title || !content ? false: true;
@@ -87,4 +81,4 @@ const AddPost = ({categoryId}) => {
     )
 }
 
-export default AddPost
+export default AppPost1

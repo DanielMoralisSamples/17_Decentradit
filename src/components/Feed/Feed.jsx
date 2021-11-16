@@ -5,7 +5,7 @@ import Reputation from "components/Reputation";
 import AddPost from "./components/AddPost";
 import glStyles from "components/gstyles";
 import Blockie from "components/Blockie";
-import { Avatar } from "antd";
+import { Avatar, Button } from "antd";
 
 const Feed = () => {
   const [showAddPost, setShowAddPost] = useState(false);
@@ -40,9 +40,12 @@ const Feed = () => {
             Your Reputation in {selectedCategory["category"]} is{" "}
             <Reputation categoryId={selectedCategory["categoryId"]} />
           </h4>
-          <button className="btn btn-dark align-right" onClick={toogleShowAddPost}>
+          {/*<button className="btn btn-dark align-right" onClick={toogleShowAddPost}>
             Post
-          </button>
+        </button>*/}
+        <Button shape="round" onClick={toogleShowAddPost}>
+            Post
+        </Button>
         </div>
         {showAddPost ? <AddPost categoryId={selectedCategory["categoryId"]} /> : ""}
         <Posts categoryId={selectedCategory["categoryId"]} />

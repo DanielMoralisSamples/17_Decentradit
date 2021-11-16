@@ -17,8 +17,8 @@ const Categories = ({ categories }) => {
       <Menu
         onClick={(e) => selectCategory(e.key)}
         style={{ ...glStyles.card, padding: "10px 0" }}
-        defaultSelectedKeys={["1"]}
-        defaultOpenKeys={["sub1"]}
+        //defaultSelectedKeys={["1"]}
+        //defaultOpenKeys={["sub1"]}
         mode="inline"
       >
         <Menu.ItemGroup key="categories" title="Categories">

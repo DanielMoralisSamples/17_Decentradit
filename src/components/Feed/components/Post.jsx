@@ -6,10 +6,10 @@ import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from "@ant-d
 import Text from "antd/lib/typography/Text";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import glStyles from "components/gstyles";
+import Votes from "./Votes";
 
 const Post = ({ post }) => {
   const { contentId, postId, postOwner } = post;
-  const [postVotes, setPostVotes] = useState("0");
   const [voteStatus, setVoteStatus] = useState();
 
   const { walletAddress, contractABI, contractAddress } = useMoralisDapp();
@@ -23,18 +23,16 @@ const Post = ({ post }) => {
   useEffect(() => {
     if (!votes?.length) return null;
 
-    async function getPostVotes() {
+    async function getPostVoteStatus() {
       const fetchedVotes = JSON.parse(JSON.stringify(votes));
       console.log("fetchedVotefetchedVote", fetchedVotes);
       fetchedVotes.forEach(({ voter, up }) => {
         if (voter === walletAddress) setVoteStatus(up ? "liked" : "disliked");
       });
-      const postVotes = fetchedVotes[0]["postVotes"];
-      setPostVotes(postVotes);
-      return postVotes;
+      return;
     }
 
-    getPostVotes();
+    getPostVoteStatus();
   }, [votes, walletAddress]);
 
   /**
@@ -69,7 +67,7 @@ const Post = ({ post }) => {
         {createElement(voteStatus === "liked" ? LikeFilled : LikeOutlined)} Vote Up
       </span>
     </Tooltip>,
-    <span style={{ fontSize: "15px" }}>{postVotes}</span>,
+    <span style={{ fontSize: "15px" }}><Votes postId={postId}/></span>,
     <Tooltip key="comment-basic-dislike" title="Dislike">
       <span
         style={{ fontSize: "15px", display: "flex", alignItems: "center", marginLeft: "8px" }}
